@@ -28,7 +28,7 @@
                 }
 
                 var productVariant = await _dataContext.ProductVariants
-                    .Where(v => v.ProductId == item.ProductId && v.ProductTypeId == v.ProductTypeId)
+                    .Where(v => v.ProductId == item.ProductId && v.ProductTypeId == item.ProductTypeId)
                     .Include(v => v.ProductType)
                     .FirstOrDefaultAsync();
 
