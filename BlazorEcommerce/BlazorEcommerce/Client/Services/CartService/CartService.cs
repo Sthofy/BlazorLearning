@@ -92,7 +92,7 @@ namespace BlazorEcommerce.Client.Services.CartService
 
             if (cartItem != null)
             {
-                cartItem.Quantity += product.Quantity;
+                cartItem.Quantity = product.Quantity;
                 await _localStorage.SetItemAsync("cart", cart);
             }
         }
