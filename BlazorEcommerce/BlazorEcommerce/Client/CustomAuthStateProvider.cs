@@ -29,7 +29,7 @@ namespace BlazorEcommerce.Client
             {
                 try
                 {
-                    identity = new ClaimsIdentity(ParseClaimsFromJwt(), "jwt");
+                    identity = new ClaimsIdentity(ParseClaimsFromJwt(authToken), "jwt");
                     _http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", authToken.Replace("\"", ""));
                 }
                 catch (Exception)
@@ -43,6 +43,8 @@ namespace BlazorEcommerce.Client
             var state = new AuthenticationState(user);
 
             NotifyAuthenticationStateChanged(Task.FromResult(state));
+
+            return state;
         }
 
         private byte[] ParseBase64WithoutPadding(string base64)
