@@ -1,4 +1,7 @@
 ﻿@page "/login"
+@inject IAuthService AuthService
+@inject ILocalStorageService LocalStorage
+@inject NavigationManager NavigationManager
 
 <PageTitle>Login</PageTitle>
 
@@ -17,16 +20,28 @@
         <ValidationMessage For="@(() => user.Password)" />
     </div>
     <button type="submit" class="btn btn-primary">Login</button>
-@*    <div class="@messageCssClass">
-        <span>@message</span>
-    </div>*@
 </EditForm>
+<div>
+    <span>@errorMessage</span>
+</div>
+
 
 @code {
     private UserLogin user = new UserLogin();
+    private string errorMessage = string.Empty;
 
     private async Task HandleLogin()
     {
-        Console.WriteLine("Log me in!");
+        var result = await AuthService.Login(user);
+        if (result.Success)
+        {
+            errorMessage = string.Empty;
+            await LocalStorage.SetItemAsync("authToken", result.Data);
+            NavigationManager.NavigateTo("");
+        }
+        else
+        {
+            errorMessage = result.Message;
+        }
     }
 }
