@@ -3,6 +3,7 @@
     public interface ICartService
     {
         Task<ServiceResponse<List<CartProductResponse>>> GetCartProducts(List<CartItem> cartItems);
-        Task<ServiceResponse<List<CartProductResponse>>> StoreCartItem(List<CartItem> cartItems, int userId);
+        Task<ServiceResponse<List<CartProductResponse>>> StoreCartItem(List<CartItem> cartItems);
     }
 }
+ 
