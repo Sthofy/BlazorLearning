@@ -62,19 +62,28 @@ namespace BlazorEcommerce.Server.Services.CartService
 
         public async Task<ServiceResponse<List<CartProductResponse>>> StoreCartItem(List<CartItem> cartItems)
         {
-            try
+            var userId = GetUserId();
+
+            foreach (var cartItem in cartItems)
             {
-                cartItems.ForEach(cartItem => cartItem.UserId = GetUserId());
-                _dataContext.CartItems.AddRange(cartItems);
-                await _dataContext.SaveChangesAsync();
+                cartItem.UserId = userId;
+
+                var sameItem = await _dataContext.CartItems
+                    .FirstOrDefaultAsync(ci => ci.ProductId == cartItem.ProductId && ci.ProductTypeId == cartItem.ProductTypeId && ci.UserId == cartItem.UserId);
+
+                if (sameItem == null)
+                {
+                    _dataContext.CartItems.Add(cartItem);
+                }
+                else
+                {
+                    sameItem.Quantity += cartItem.Quantity;
+                }
 
             }
-            catch (Exception ex)
-            {
 
-                throw;
-            }
-            return await GetDbCartProducts(); 
+            await _dataContext.SaveChangesAsync();
+            return await GetDbCartProducts();
         }
 
         public async Task<ServiceResponse<int>> GetCartItemsCount()
@@ -88,6 +97,27 @@ namespace BlazorEcommerce.Server.Services.CartService
         {
             return await GetCartProducts(await _dataContext.CartItems
                 .Where(ci => ci.UserId == GetUserId()).ToListAsync());
+        }
+
+        public async Task<ServiceResponse<bool>> AddToCart(CartItem cartItem)
+        {
+            cartItem.UserId = GetUserId();
+
+            var sameItem = await _dataContext.CartItems
+                .FirstOrDefaultAsync(ci => ci.ProductId == cartItem.ProductId && ci.ProductTypeId == cartItem.ProductTypeId && ci.UserId == cartItem.UserId);
+
+            if (sameItem == null)
+            {
+                _dataContext.CartItems.Add(cartItem);
+            }
+            else
+            {
+                sameItem.Quantity += cartItem.Quantity;
+            }
+
+            await _dataContext.SaveChangesAsync();
+
+            return new ServiceResponse<bool> { Data = true };
         }
     }
 }

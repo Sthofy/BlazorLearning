@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace BlazorEcommerce.Server.Controllers
 {
@@ -26,6 +25,14 @@ namespace BlazorEcommerce.Server.Controllers
         public async Task<ActionResult<ServiceResponse<List<CartProductResponse>>>> StoreCartItems(List<CartItem> cartItems)
         {
             var result = await _cartService.StoreCartItem(cartItems);
+
+            return Ok(result);
+        }
+
+        [HttpPost("add")]
+        public async Task<ActionResult<bool>> AddToCart(CartItem cartItem)
+        {
+            var result = await _cartService.AddToCart(cartItem);
 
             return Ok(result);
         }
