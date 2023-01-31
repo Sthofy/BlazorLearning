@@ -20,7 +20,7 @@ namespace BlazorEcommerce.Client.Services.CartService
 
         public async Task AddToCart(CartItem cartItem)
         {
-            if ((await _authStateProvider.GetAuthenticationStateAsync()).User.Identity.IsAuthenticated)
+            if (await IsUserAuthenticated())
             {
                 Console.WriteLine("user is auth");
             }
@@ -117,10 +117,15 @@ namespace BlazorEcommerce.Client.Services.CartService
 
             await _http.PostAsJsonAsync("api/cart", localCart);
 
-            if(emptyLocalCart)
+            if (emptyLocalCart)
             {
                 await _localStorage.RemoveItemAsync("cart");
             }
+        }
+
+        private async Task<bool> IsUserAuthenticated()
+        {
+            return (await _authStateProvider.GetAuthenticationStateAsync()).User.Identity.IsAuthenticated;
         }
     }
 }
