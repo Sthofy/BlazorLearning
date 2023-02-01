@@ -9,12 +9,16 @@ namespace BlazorEcommerce.Server.Services.AuthService
     {
         private readonly DataContext _context;
         private readonly IConfiguration _config;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AuthService(DataContext context, IConfiguration config)
+        public AuthService(DataContext context, IConfiguration config, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _config = config;
+            _httpContextAccessor = httpContextAccessor;
         }
+
+        public int GetUserId() => int.Parse(_httpContextAccessor.HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
 
         public async Task<ServiceResponse<string>> Login(string email, string password)
         {
@@ -116,7 +120,7 @@ namespace BlazorEcommerce.Server.Services.AuthService
         {
             var user = await _context.Users.FindAsync(userId);
 
-            if(user == null)
+            if (user == null)
             {
                 return new ServiceResponse<bool>
                 {
@@ -125,14 +129,14 @@ namespace BlazorEcommerce.Server.Services.AuthService
                 };
             }
 
-            CreatePasswordHash(newPassword,out byte[] passwordHash,out byte[] passwordSalt);
+            CreatePasswordHash(newPassword, out byte[] passwordHash, out byte[] passwordSalt);
 
-            user.PasswordHash= passwordHash;
-            user.PasswordSalt= passwordSalt;
+            user.PasswordHash = passwordHash;
+            user.PasswordSalt = passwordSalt;
 
             await _context.SaveChangesAsync();
 
-            return new ServiceResponse<bool> { Success = true , Message="Password has been changed."};
+            return new ServiceResponse<bool> { Success = true, Message = "Password has been changed." };
         }
     }
 }
