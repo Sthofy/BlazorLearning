@@ -6,8 +6,10 @@ global using BlazorEcommerce.Server.Services.CategoryService;
 global using BlazorEcommerce.Server.Services.CartService;
 global using BlazorEcommerce.Server.Services.AuthService;
 global using BlazorEcommerce.Server.Services.OrderService;
+global using BlazorEcommerce.Server.Services.PaymentService;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Stripe;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -22,11 +24,12 @@ builder.Services.AddRazorPages();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IProductService, BlazorEcommerce.Server.Services.ProductService.ProductService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<ICartService, CartService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
