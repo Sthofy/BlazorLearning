@@ -30,8 +30,11 @@
                 dbAddress.City = address.City;
                 dbAddress.Zip = address.Zip;
                 dbAddress.Street = address.Street;
+                response.Data = dbAddress;
             }
             await _context.SaveChangesAsync();
+
+            return response;
         }
 
         public async Task<ServiceResponse<Address>> GetAddress()
